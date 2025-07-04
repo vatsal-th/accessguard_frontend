@@ -6,8 +6,11 @@ import Button from './Button';
 const navConfig = {
   admin: [
     { to: '/dashboard', label: 'Dashboard' },
-    { to: '/users', label: 'Users' },
-    // Add more admin links here
+    { to: '/users', label: 'All Users' },
+    { to: '/user/admins', label: 'Admins' },
+    { to: '/user/managers', label: 'Managers' },
+    { to: '/user/employees', label: 'Employees' },
+    // { to: '/users/users', label: 'Users' },
   ],
   manager: [
     { to: '/dashboard', label: 'Dashboard' },

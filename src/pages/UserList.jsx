@@ -16,6 +16,9 @@ const UserList = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 10;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -66,76 +69,120 @@ const UserList = () => {
     navigate(`/users/${user._id || user.id}`);
   };
 
- return (
-  <div className="min-h-screen flex bg-gray-50">
-    <Sidebar />
-    <main className="flex-1 px-6 py-10">
-      <div className="bg-white rounded-xl shadow-md p-6 max-w-6xl mx-auto border border-gray-100">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-semibold text-gray-800">User Management</h2>
-          {/* You can add a "New User" button here later if needed */}
-        </div>
+  const filteredUsers = users.filter(
+    user =>
+      user.name?.toLowerCase().includes(search.toLowerCase()) ||
+      user.email?.toLowerCase().includes(search.toLowerCase())
+  );
 
-        {error && (
-          <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded border border-red-200">
-            {error}
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const paginatedUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+
+  return (
+    <div className="min-h-screen flex bg-gray-50">
+      <Sidebar />
+      <main className="flex-1 px-6 py-10">
+        <div className="bg-white rounded-xl shadow-md p-6 max-w-6xl mx-auto border border-gray-100">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-semibold text-gray-800">User Management</h2>
+            {/* You can add a "New User" button here later if needed */}
           </div>
-        )}
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white text-sm text-left border border-gray-100">
-            <thead className="bg-gray-50">
-              <tr>
-                {columns.map((col) => (
-                  <th key={col.key} className="px-4 py-3 font-medium text-gray-600 whitespace-nowrap">
-                    {col.title}
-                  </th>
-                ))}
-                <th className="px-4 py-3 text-gray-500">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
+          <input
+            type="text"
+            placeholder="Search by name or email"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="mb-4 px-4 py-2 border rounded w-full max-w-xs"
+          />
+
+          {error && (
+            <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded border border-red-200">
+              {error}
+            </div>
+          )}
+
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white text-sm text-left border border-gray-100">
+              <thead className="bg-gray-50">
                 <tr>
-                  <td colSpan={columns.length + 1} className="text-center py-8 text-gray-500">
-                    Loading users...
-                  </td>
+                  {columns.map((col) => (
+                    <th key={col.key} className="px-4 py-3 font-medium text-gray-600 whitespace-nowrap">
+                      {col.title}
+                    </th>
+                  ))}
+                  <th className="px-4 py-3 text-gray-500">Action</th>
                 </tr>
-              ) : users.length === 0 ? (
-                <tr>
-                  <td colSpan={columns.length + 1} className="text-center py-8 text-gray-400">
-                    No users found.
-                  </td>
-                </tr>
-              ) : (
-                users.map((user) => (
-                  <tr
-                    key={user._id}
-                    className="border-t hover:bg-gray-50 transition-colors"
-                  >
-                    {columns.map((col) => (
-                      <td key={col.key} className="px-4 py-3 align-top whitespace-nowrap">
-                        {col.render
-                          ? col.render(user[col.key], user)
-                          : user[col.key] ?? '-'}
-                      </td>
-                    ))}
-                    <td className="px-4 py-3">
-                      <Button size="sm" onClick={() => handleView(user)}>
-                        View
-                      </Button>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan={columns.length + 1} className="text-center py-8 text-gray-500">
+                      Loading users...
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : paginatedUsers.length === 0 ? (
+                  <tr>
+                    <td colSpan={columns.length + 1} className="text-center py-8 text-gray-400">
+                      No users found.
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedUsers.map((user) => (
+                    <tr
+                      key={user._id}
+                      className="border-t hover:bg-gray-50 transition-colors"
+                    >
+                      {columns.map((col) => (
+                        <td key={col.key} className="px-4 py-3 align-top whitespace-nowrap">
+                          {col.render
+                            ? col.render(user[col.key], user)
+                            : user[col.key] ?? '-'}
+                        </td>
+                      ))}
+                      <td className="px-4 py-3">
+                        <Button size="sm" onClick={() => handleView(user)}>
+                          View
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+          {/* Pagination Controls */}
+          <div className="flex justify-center mt-4 space-x-2">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1 rounded border bg-gray-100 disabled:opacity-50"
+            >
+              Prev
+            </button>
+            {Array.from({ length: totalPages }, (_, idx) => (
+              <button
+                key={idx + 1}
+                onClick={() => setCurrentPage(idx + 1)}
+                className={`px-3 py-1 rounded border ${currentPage === idx + 1 ? 'bg-blue-500 text-white' : 'bg-gray-100'}`}
+              >
+                {idx + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 rounded border bg-gray-100 disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
         </div>
-      </div>
-    </main>
-  </div>
-);
-
+      </main>
+    </div>
+  );
 };
 
 export default UserList; 
