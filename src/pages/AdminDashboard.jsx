@@ -81,16 +81,16 @@ const AdminDashboard = () => {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-gray-800">Admin Dashboard</h1>
           <div className="flex gap-2">
-            <Link to="/users/add" className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm">
+            <Link to="/register" className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm">
               <FiPlus className="mr-1" /> Add User
             </Link>
-            <Link to="/roles" className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+            {/* <Link to="/roles" className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
               <FiSettings className="mr-1" /> Manage Roles
-            </Link>
+            </Link> */}
             <Link to="/logs" className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm">
               <FiList className="mr-1" /> View All Logs
             </Link>
-          </div>
+          </div>      
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {statCards.map((stat) => <StatCard key={stat.title} {...stat} loading={loading} />)}
