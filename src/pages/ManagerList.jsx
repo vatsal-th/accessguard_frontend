@@ -4,7 +4,7 @@ import Sidebar from '../components/Sidebar';
 import Button from '../components/Button';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { FiChevronDown, FiChevronRight, FiUsers, FiUser, FiUserCheck, FiUserX, FiEye } from 'react-icons/fi';
+import {FiUsers, FiUser, FiUserCheck, FiUserX, FiEye } from 'react-icons/fi';
 
 const ManagerList = () => {
   const [managers, setManagers] = useState([]);
