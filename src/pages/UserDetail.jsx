@@ -42,6 +42,7 @@ const UserDetail = () => {
   const [showDelete, setShowDelete] = useState(false);
   const [editPermissions, setEditPermissions] = useState([]);
   const [savingPerms, setSavingPerms] = useState(false);
+  const [deleted, setDeleted] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -72,8 +73,9 @@ const UserDetail = () => {
         setLoading(false);
       }
     };
+    if (deleted) return;
     fetchUser();
-  }, [id, isAdmin, isSelf]);
+  }, [id, isAdmin, isSelf, deleted]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -100,7 +102,9 @@ const UserDetail = () => {
     setSuccess("");
     try {
       await axiosInstance.delete(`/user/${id}`);
-      setShowDelete(false);
+      setDeleted(true);
+      // setShowDelete(false);
+      alert("User deleted successfully");
       navigate("/users");
     } catch (err) {
       setError(err?.response?.data?.message || "Failed to delete user");
@@ -246,7 +250,7 @@ const UserDetail = () => {
                   <Button
                     size="sm"
                     variant="danger"
-                    onClick={() => setShowDelete(true)}
+                    onClick={handleDelete}
                     disabled={!isAdmin}
                   >
                     <FiTrash2 className="mr-1.5" />
@@ -422,7 +426,7 @@ const UserDetail = () => {
         </div>
 
         {/* Delete Modal */}
-        <Modal
+        {/* <Modal
           open={showDelete}
           onClose={() => setShowDelete(false)}
           title="Confirm User Deletion"
@@ -453,10 +457,10 @@ const UserDetail = () => {
               </Button>
             </div>
           </div>
-        </Modal>
+        </Modal> */}
       </main>
     </div>
   );
 };
 
-export default UserDetail;
+export default UserDetail;  
