@@ -56,13 +56,20 @@ const Sidebar = () => {
       {/* User Profile */}
       <div className="px-6 py-4 border-t border-b border-gray-100 bg-gray-50">
         <div className="flex items-center space-x-3">
-          <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">
-            {user?.name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase()}
-          </div>
+          {(role === 'admin' || role === 'manager' || role === 'user' || role === 'employee') && (
+            <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">
+              {user?.name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase()}
+            </div>
+          )}
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">
-              {user?.name || user?.email}
-            </p>
+            {(role === 'admin' || role === 'manager' || role === 'user' || role === 'employee') && (
+              <>
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {user?.name}
+                </p>
+                {/* <p className="text-xs text-gray-500 truncate">{user?.email}</p> */}
+              </>
+            )}
             <p className="text-xs text-gray-500 capitalize">{role}</p>
           </div>
         </div>
