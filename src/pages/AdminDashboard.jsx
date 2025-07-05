@@ -36,13 +36,28 @@ const AdminDashboard = () => {
       try {
         const analyticsRes = await axiosInstance.get('/user/analytics');
         setAnalytics(analyticsRes.data);
+        
         // Fetch logs from backend and format them for display
-        const logsRes = await axiosInstance.get('/log');
-        setLogs(
-          (logsRes.data || []).map(log =>
-            `${new Date(log.timestamp || log.createdAt).toLocaleString()} - [${log.action}] ${log.details?.userName || ''} (${log.details?.userEmail || ''}) - ${log.method} ${log.url} - IP: ${log.ip}`
-          )
-        );
+        const logsRes = await axiosInstance.get('/log?limit=15');
+        
+        const formattedLogs = (logsRes.data || []).map(log => {
+          const timestamp = new Date(log.timestamp || log.createdAt).toLocaleString();
+          const action = log.action || 'Unknown';
+          const userName = log.details?.userName || log.userName || '';
+          const userEmail = log.details?.userEmail || log.userEmail || '';
+          const method = log.method || '-';
+          const url = log.url || '-';
+          const ip = log.ip || '-';
+          
+          // Create a more readable log format
+          const logEntry = `${timestamp} - [${action}] ${userName} (${userEmail})`;
+          const details = `${method} ${url} - IP: ${ip}`;
+          
+          return `${logEntry} - ${details}`;
+        });
+        
+        setLogs(formattedLogs);
+        
       } catch (err) {
         console.warn('API calls failed, using mock data for development:', err.message);
         setUsingMockData(true);
@@ -87,9 +102,9 @@ const AdminDashboard = () => {
             {/* <Link to="/roles" className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
               <FiSettings className="mr-1" /> Manage Roles
             </Link> */}
-            <Link to="/logs" className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm">
+            {/* <Link to="/logs" className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm">
               <FiList className="mr-1" /> View All Logs
-            </Link>
+            </Link> */}
           </div>      
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -122,16 +137,43 @@ const AdminDashboard = () => {
             </ResponsiveContainer>
           </div>
           <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="font-semibold text-lg mb-4 flex items-center">
-              <FiList className="mr-2" /> Logs
-            </h3>
-            <div className="overflow-y-auto max-h-72">
-              {logs.length > 0 ? logs.map((log, idx) => (
-                <div key={idx} className="text-sm text-gray-700 border-b py-1">
-                  {log}
-                </div>
-              )) : <div className="text-gray-400">No logs found.</div>}
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-semibold text-lg flex items-center">
+                <FiList className="mr-2" /> Recent Activity Logs
+              </h3>
+              <Link to="/logs" className="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                View All →
+              </Link>
             </div>
+            <div className="overflow-y-auto max-h-96">
+              {logs.length > 0 ? logs.map((log, idx) => (
+                <div key={idx} className="text-xs text-gray-700 border-b border-gray-100 py-2 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 min-w-0">
+                      <div 
+                        className="font-medium text-gray-900 leading-relaxed break-all whitespace-normal" 
+                        title={log}
+                        style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
+                      >
+                        {log}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )) : (
+                <div className="text-gray-400 text-center py-8">
+                  <FiList className="mx-auto mb-2 text-2xl" />
+                  <p>No logs found.</p>
+                </div>
+              )}
+            </div>
+            {logs.length > 0 && (
+              <div className="mt-3 pt-2 border-t border-gray-200">
+                <p className="text-xs text-gray-500 text-center">
+                  Showing {logs.length} most recent logs
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </main>

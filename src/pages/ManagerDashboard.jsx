@@ -106,7 +106,7 @@ const ManagerDashboard = () => {
       console.error("Failed to deactivate user:", error);
       // Optionally show an error message to the user
     }
-  };
+  };  
 
   const handleActivate = async (userId) => {
     try {

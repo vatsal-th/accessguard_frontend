@@ -13,6 +13,7 @@ import PublicRoute from './routes/PublicRoute';
 import AllLogs from './pages/AllLogs';
 import AdminList from './pages/AdminList';
 import ManagerList from './pages/ManagerList';
+import ManagerTeam from './pages/ManagerTeam';
 import EmployeeList from './pages/EmployeeList';
 import AdminDashboard from './pages/AdminDashboard';
 import ManagerDashboard from './pages/ManagerDashboard';
@@ -56,6 +57,7 @@ function App() {
             <Route path="/user/managers" element={<ManagerList />} />
             <Route path="/user/employees" element={<EmployeeList />} />
           </Route>
+            <Route path="/user/managers/:managerId/team" element={<ManagerTeam />} />
 
           {/* Unauthorized */}
           <Route path="/unauthorized" element={<Unauthorized />} />

@@ -13,7 +13,7 @@ const UserDashboard = () => {
       setLoading(true);
       setError('');
       try {
-        const res = await axiosInstance.get('/user/me');
+        const res = await axiosInstance.get('/user/me');    
         setProfile(res.data.user);
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load profile');

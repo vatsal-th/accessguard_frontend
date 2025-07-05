@@ -35,7 +35,7 @@ const columns = [
         'DELETE': { color: 'bg-red-100 text-red-800', icon: '🗑️' },
         'update_user': { color: 'bg-yellow-100 text-yellow-800', icon: '✏️' },
         'delete_user': { color: 'bg-red-100 text-red-800', icon: '🗑️' },
-        
+          
         // Status actions
         'deactivate_user': { color: 'bg-red-100 text-red-800', icon: '⏸️' },
         'activate_user': { color: 'bg-green-100 text-green-800', icon: '▶️' },
