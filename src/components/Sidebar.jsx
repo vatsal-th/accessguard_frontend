@@ -22,7 +22,7 @@ const navConfig = {
   ],
   manager: [
     { to: '/dashboard', label: 'Dashboard', icon: <FiHome /> },
-    { to: '/team', label: 'My Team', icon: <FiUsers /> },
+    // { to: '/team', label: 'My Team', icon: <FiUsers /> },
   ],
   employee: [
     { to: '/dashboard', label: 'Dashboard', icon: <FiHome /> },
@@ -99,7 +99,7 @@ const Sidebar = () => {
         </div>
         <Button
           variant="ghost"
-          className="w-full justify-start text-gray-700 hover:bg-gray-100"
+          className="w-full justify-start text-gray-700 "
           onClick={logout}
         >
           <FiLogOut className="mr-3" />

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../api/axios';
-import Table from '../components/Table';
 import { 
   FiRefreshCw, 
   FiTrash2, 

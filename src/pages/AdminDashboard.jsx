@@ -8,10 +8,8 @@ import {
   FiUserX, 
   FiUserPlus, 
   FiPlus, 
-  FiSettings, 
   FiList,
   FiActivity,
-  FiShield,
   FiClock,
   FiAlertCircle
 } from 'react-icons/fi';

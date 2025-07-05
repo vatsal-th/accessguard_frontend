@@ -15,7 +15,8 @@ import {
   FiShield,
   FiEdit2,
   FiTrash2,
-  FiPlus
+  FiPlus,
+  FiChevronRight
 } from 'react-icons/fi';
 
 const ManagerTeam = () => {
@@ -67,9 +68,6 @@ const ManagerTeam = () => {
     fetchManagerTeam();
   }, [managerId]);
 
-
-
-
   const handleRemoveFromTeam = async (memberId) => {
     if (!window.confirm('Are you sure you want to remove this member from the team?')) return;
     try {
@@ -91,14 +89,41 @@ const ManagerTeam = () => {
 
   const StatCard = ({ title, value, icon, color = 'blue' }) => {
     const Icon = icon;
+    const colorClasses = {
+      blue: {
+        bg: 'bg-blue-100',
+        text: 'text-blue-600',
+        border: 'border-blue-500',
+        textValue: 'text-blue-800'
+      },
+      green: {
+        bg: 'bg-green-100',
+        text: 'text-green-600',
+        border: 'border-green-500',
+        textValue: 'text-green-800'
+      },
+      red: {
+        bg: 'bg-red-100',
+        text: 'text-red-600',
+        border: 'border-red-500',
+        textValue: 'text-red-800'
+      },
+      indigo: {
+        bg: 'bg-indigo-100',
+        text: 'text-indigo-600',
+        border: 'border-indigo-500',
+        textValue: 'text-indigo-800'
+      }
+    };
+    
     return (
-      <div className={`bg-white rounded-lg shadow p-4 flex items-center border-l-4 border-${color}-500`}>
-        <div className={`p-2 rounded-full bg-${color}-100 text-${color}-600 mr-4`}>
-          <Icon size={24} />
+      <div className={`bg-white rounded-lg shadow p-6 flex items-center border-l-4 ${colorClasses[color].border} transition-all hover:shadow-md`}>
+        <div className={`p-3 rounded-full ${colorClasses[color].bg} ${colorClasses[color].text} mr-4`}>
+          <Icon size={20} />
         </div>
         <div>
           <p className="text-sm font-medium text-gray-500">{title}</p>
-          <h3 className={`text-2xl font-bold text-${color}-800`}>{value}</h3>
+          <h3 className={`text-2xl font-bold ${colorClasses[color].textValue}`}>{value}</h3>
         </div>
       </div>
     );
@@ -107,10 +132,10 @@ const ManagerTeam = () => {
   if (loading) return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
-      <main className="flex-1 p-6">
+      <main className="flex-1 p-6 lg:p-8">
         <div className="flex justify-center items-center h-64">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
             <p className="text-gray-600">Loading manager team...</p>
           </div>
         </div>
@@ -121,8 +146,8 @@ const ManagerTeam = () => {
   if (error) return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
-      <main className="flex-1 p-6">
-        <div className="text-center">
+      <main className="flex-1 p-6 lg:p-8">
+        <div className="text-center py-12">
           <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
             <h3 className="text-lg font-medium text-red-800 mb-2">Error Loading Team</h3>
             <p className="text-red-600">{error}</p>
@@ -143,25 +168,29 @@ const ManagerTeam = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
-      <main className="flex-1 p-6">
+      <main className="flex-1 p-6 lg:p-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate(-1)}
-              className="inline-flex items-center px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm"
+              className="inline-flex items-center px-3 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm shadow-sm"
             >
               <FiArrowLeft className="mr-2" /> Back
             </button>
             <div>
-              <h1 className="text-2xl font-bold text-gray-800">Manager Team</h1>
-              <p className="text-gray-600">Team members managed by {manager?.name}</p>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Manager Team</h1>
+              <p className="text-gray-600 flex items-center">
+                <FiChevronRight className="mx-1 text-gray-400" />
+                Team members managed by <span className="font-medium ml-1 text-indigo-600">{manager?.name}</span>
+              </p>
             </div>
           </div>
           {isAdmin && (
             <Button 
               onClick={() => navigate('/user/employees')}
               className="inline-flex items-center"
+              variant="primary"
             >
               <FiPlus className="mr-2" />
               Add Team Member
@@ -171,40 +200,55 @@ const ManagerTeam = () => {
 
         {/* Manager Info Card */}
         {manager && (
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center">
-              <FiShield className="mr-2 text-blue-600" />
-              Manager Information
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="flex items-center">
-                <FiUser className="text-gray-400 mr-3" />
-                <div>
-                  <p className="text-sm text-gray-500">Name</p>
-                  <p className="font-medium">{manager.name}</p>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-800 flex items-center">
+                <FiShield className="mr-3 text-indigo-600" />
+                Manager Information
+              </h2>
+              <span className={`px-3 py-1 rounded-full text-xs font-medium ${manager.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                {manager.active ? 'Active' : 'Inactive'}
+              </span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="flex items-center">
+                  <FiUser className="text-gray-400 mr-3" />
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase tracking-wider">Name</p>
+                    <p className="font-medium text-gray-900">{manager.name}</p>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center">
-                <FiMail className="text-gray-400 mr-3" />
-                <div>
-                  <p className="text-sm text-gray-500">Email</p>
-                  <p className="font-medium">{manager.email}</p>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="flex items-center">
+                  <FiMail className="text-gray-400 mr-3" />
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase tracking-wider">Email</p>
+                    <p className="font-medium text-gray-900">{manager.email}</p>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center">
-                <FiShield className="text-gray-400 mr-3" />
-                <div>
-                  <p className="text-sm text-gray-500">Role</p>
-                  <p className="font-medium capitalize">{Array.isArray(manager.roles) ? manager.roles.join(', ') : manager.roles}</p>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="flex items-center">
+                  <FiShield className="text-gray-400 mr-3" />
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase tracking-wider">Role</p>
+                    <p className="font-medium text-gray-900 capitalize">
+                      {Array.isArray(manager.roles) ? manager.roles.join(', ') : manager.roles}
+                    </p>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center">
-                <FiUserCheck className="text-gray-400 mr-3" />
-                <div>
-                  <p className="text-sm text-gray-500">Status</p>
-                  <p className={`font-medium ${manager.active ? 'text-green-600' : 'text-red-500'}`}>
-                    {manager.active ? 'Active' : 'Inactive'}
-                  </p>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="flex items-center">
+                  <FiCalendar className="text-gray-400 mr-3" />
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase tracking-wider">Member Since</p>
+                    <p className="font-medium text-gray-900">
+                      {manager.createdAt ? new Date(manager.createdAt).toLocaleDateString() : 'N/A'}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -212,12 +256,12 @@ const ManagerTeam = () => {
         )}
 
         {/* Team Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard 
             title="Total Team Members" 
             value={stats.totalMembers} 
             icon={FiUsers} 
-            color="blue" 
+            color="indigo" 
           />
           <StatCard 
             title="Active Members" 
@@ -231,70 +275,87 @@ const ManagerTeam = () => {
             icon={FiUserX} 
             color="red" 
           />
+          <StatCard 
+            title="Manager Since" 
+            value={manager?.createdAt ? new Date(manager.createdAt).toLocaleDateString() : 'N/A'} 
+            icon={FiCalendar} 
+            color="blue" 
+          />
         </div>
 
         {/* Team Members Table */}
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-6 border-b border-gray-200">
-            <h3 className="text-lg font-semibold flex items-center">
-              <FiUsers className="mr-2" />
-              Team Members ({teamMembers.length})
-            </h3>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center mb-3 sm:mb-0">
+              <FiUsers className="text-indigo-600 mr-3" />
+              <h3 className="text-lg font-semibold text-gray-800">
+                Team Members <span className="text-gray-500 font-normal">({teamMembers.length})</span>
+              </h3>
+            </div>
+            {teamMembers.length > 0 && (
+              <div className="text-sm text-gray-500">
+                Showing <span className="font-medium">1-{teamMembers.length}</span> of <span className="font-medium">{teamMembers.length}</span> members
+              </div>
+            )}
           </div>
           
-          <div className="overflow-x-auto">
-            <table className="min-w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {teamMembers.length === 0 ? (
+          {teamMembers.length === 0 ? (
+            <div className="p-12 text-center">
+              <div className="mx-auto max-w-md">
+                <FiUsers className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-1">No team members found</h3>
+                <p className="text-gray-500 mb-6">This manager doesn't have any team members assigned yet.</p>
+                {isAdmin && (
+                  <Button 
+                    onClick={() => navigate('/user/employees')}
+                    variant="primary"
+                  >
+                    <FiPlus className="mr-2" />
+                    Add Team Members
+                  </Button>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                      <FiUsers className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                      <p className="text-lg font-medium">No team members found</p>
-                      <p className="text-sm">This manager doesn't have any team members assigned yet.</p>
-                    </td>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Member</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
+                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
-                ) : (
-                  teamMembers.map((member) => (
-                    <tr key={member._id} className="hover:bg-gray-50">
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {teamMembers.map((member) => (
+                    <tr key={member._id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="flex-shrink-0 h-10 w-10">
-                            <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                              <FiUser className="h-6 w-6 text-gray-600" />
-                            </div>
+                          <div className="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                            <FiUser className="h-5 w-5 text-indigo-600" />
                           </div>
                           <div className="ml-4">
                             <div className="text-sm font-medium text-gray-900">{member.name}</div>
+                            <div className="text-sm text-gray-500">{member.email}</div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{member.email}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                        <div className="text-sm text-gray-900 capitalize">
                           {Array.isArray(member.roles) ? member.roles.join(', ') : member.roles}
-                        </span>
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {member.active ? (
-                          <span className="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                            <FiUserCheck className="mr-1" />
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <FiUserCheck className="mr-1.5" />
                             Active
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                            <FiUserX className="mr-1" />
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                            <FiUserX className="mr-1.5" />
                             Inactive
                           </span>
                         )}
@@ -302,8 +363,16 @@ const ManagerTeam = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {member.createdAt ? new Date(member.createdAt).toLocaleDateString() : 'N/A'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex space-x-2">
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex justify-end space-x-2">
+                          {/* <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => navigate(`/user/${member._id}`)}
+                            title="View Profile"
+                          >
+                            View
+                          </Button> */}
                           {isAdmin && (
                             <Button
                               size="sm"
@@ -317,15 +386,15 @@ const ManagerTeam = () => {
                         </div>
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </main>
     </div>
   );
 };
 
-export default ManagerTeam; 
+export default ManagerTeam;
